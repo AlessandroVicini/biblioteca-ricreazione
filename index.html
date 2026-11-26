@@ -375,14 +375,16 @@ function mostraLista(){
     if(e.target.dataset.d){const b=libri.find(x=>x.isbn===e.target.dataset.d);if(!confirm("Eliminare «"+b.titolo+"»?"))return;
       try{const lista=(await leggiLibri()).filter(x=>x.isbn!==b.isbn);await scriviLibri(lista,"Rimosso: "+b.titolo);libri=lista;disegna();mostraLista()}catch(err){alert(err.message)}}};
 }
-let scanStop=null,detNat=null,detZx=null;
+let scanStop=null,detNat=null,zx=null;
 async function rilevatori(){
   if(!detNat&&"BarcodeDetector" in window){try{if((await BarcodeDetector.getSupportedFormats()).includes("ean_13"))detNat=new BarcodeDetector({formats:["ean_13","upc_a"]})}catch(e){}}
-  if(!detZx){try{const m=await import("./lib/barcode.js");detZx=new m.BarcodeDetector({formats:["ean_13","upc_a"]})}catch(e){}}
-  const d=[detNat,detZx].filter(Boolean);if(!d.length)throw new Error("lettore di codici non caricato");return d;
+  if(!zx){try{zx=await import("./lib/zx.js")}catch(e){}}
+  if(!detNat&&!zx)throw new Error("lettore di codici non caricato");
 }
-async function leggiCodice(src,dets){
-  for(const d of dets){try{const r=await d.detect(src);for(const x of r){const c=(x.rawValue||"").replace(/\D/g,"");if(/^97[89]\d{10}$/.test(c))return c}}catch(e){}}
+const isIsbn=v=>{const c=String(v||"").replace(/\D/g,"");return /^97[89]\d{10}$/.test(c)?c:null};
+async function leggiCodice(cv){
+  if(detNat){try{for(const x of await detNat.detect(cv)){const c=isIsbn(x.rawValue);if(c)return c}}catch(e){}}
+  if(zx){try{for(const t of await zx.leggi(cv.getContext("2d").getImageData(0,0,cv.width,cv.height))){const c=isIsbn(t);if(c)return c}}catch(e){}}
   return null;
 }
 function trovato(c){if(scanStop)scanStop();if(navigator.vibrate)navigator.vibrate(80);$("#isbn").value=c;avvia(c)}
@@ -391,7 +393,7 @@ async function scansiona(){
   const v=$("#vid");let st;
   try{
     msg("Avvio la fotocamera…");
-    const dets=await rilevatori();
+    await rilevatori();
     st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1080},advanced:[{focusMode:"continuous"}]},audio:false});
     v.setAttribute("playsinline","");v.srcObject=st;v.style.display="block";await v.play();
     const tr=st.getVideoTracks()[0];try{const cap=tr.getCapabilities?.()||{};const adv={};if(cap.focusMode?.includes("continuous"))adv.focusMode="continuous";if(cap.zoom)adv.zoom=Math.min(cap.zoom.max,2);if(Object.keys(adv).length)await tr.applyConstraints({advanced:[adv]})}catch(e){}
@@ -403,7 +405,7 @@ async function scansiona(){
         n++;const W=v.videoWidth,H=v.videoHeight;
         // alterna: fotogramma intero e fascia centrale ingrandita
         if(n%2){cv.width=W;cv.height=H;cx.drawImage(v,0,0)}else{const w=W*.8,h=H*.4;cv.width=w;cv.height=h;cx.drawImage(v,(W-w)/2,(H-h)/2,w,h,0,0,w,h)}
-        const c=await leggiCodice(cv,dets);if(c)return trovato(c);
+        const c=await leggiCodice(cv);if(c)return trovato(c);
       }
       setTimeout(loop,120)};
     loop();
@@ -415,17 +417,21 @@ async function scansiona(){
 async function fotoCodice(file){
   if(!file)return;if(scanStop)scanStop();msg("Leggo il codice dalla foto…");
   try{
-    const dets=await rilevatori();const bmp=await createImageBitmap(file);
-    const cv=document.createElement("canvas"),cx=cv.getContext("2d");
-    // prova a varie scale e anche ruotata
-    for(const sc of [1,.6,.35]){for(const rot of [0,90]){
-      const w=bmp.width*sc,h=bmp.height*sc;cv.width=rot?h:w;cv.height=rot?w:h;cx.save();
-      if(rot){cx.translate(h,0);cx.rotate(Math.PI/2)}cx.drawImage(bmp,0,0,w,h);cx.restore();
-      const c=await leggiCodice(cv,dets);if(c)return trovato(c)}}
-    msg("❌ Non riesco a leggere il codice in questa foto. Riprova più vicino e a fuoco, oppure scrivi l'ISBN.");
+    await rilevatori();const bmp=await createImageBitmap(file);
+    const cv=document.createElement("canvas"),cx=cv.getContext("2d",{willReadFrequently:true});
+    // tentativi: foto intera, ritagli centrali, poi versioni ridotte
+    const prove=[[1,3000],[.6,3000],[.4,3000],[1,2000],[.6,1400],[1,1200],[.6,900],[1,800]];
+    for(const [cr,max] of prove){
+      const sw=bmp.width*cr,sh=bmp.height*cr,k=Math.min(1,max/Math.max(sw,sh));
+      cv.width=Math.round(sw*k);cv.height=Math.round(sh*k);cx.fillStyle="#fff";cx.fillRect(0,0,cv.width,cv.height);
+      cx.drawImage(bmp,(bmp.width-sw)/2,(bmp.height-sh)/2,sw,sh,0,0,cv.width,cv.height);
+      const c=await leggiCodice(cv);if(c)return trovato(c);
+    }
+    msg("❌ Non riesco a leggere il codice in questa foto. Riprova: codice al centro, ben a fuoco (tocca lo schermo per mettere a fuoco), senza riflessi. Oppure scrivi l'ISBN.");
   }catch(e){msg("❌ Errore: "+esc(e.message))}
   $("#fCod").value="";
 }
+
 
 if(location.hash==="#admin")adminUI();
 carica();
