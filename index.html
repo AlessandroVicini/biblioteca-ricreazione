@@ -338,6 +338,7 @@ function adminUI(){
   $("#salva").onclick=salva;
   if(c.token)aggiornaLista();
 }
+const msg=t=>{const m=document.getElementById("msg");if(m)m.innerHTML=t};
 async function avvia(v){
   const isbn=v.replace(/[^\dX]/gi,"");if(isbn.length!==10&&isbn.length!==13)return msg("ISBN non valido.");
   msg("Cerco…");fotoData=null;$("#anteprima").innerHTML="";$("#fFoto").value="";
@@ -377,7 +378,7 @@ function mostraLista(){
 let scanStop=null,detNat=null,detZx=null;
 async function rilevatori(){
   if(!detNat&&"BarcodeDetector" in window){try{if((await BarcodeDetector.getSupportedFormats()).includes("ean_13"))detNat=new BarcodeDetector({formats:["ean_13","upc_a"]})}catch(e){}}
-  if(!detZx){try{const m=await import("https://cdn.jsdelivr.net/npm/barcode-detector@3/ponyfill/+esm");detZx=new m.BarcodeDetector({formats:["ean_13","upc_a"]})}catch(e){}}
+  if(!detZx){try{const m=await import("./lib/barcode.js");detZx=new m.BarcodeDetector({formats:["ean_13","upc_a"]})}catch(e){}}
   const d=[detNat,detZx].filter(Boolean);if(!d.length)throw new Error("lettore di codici non caricato");return d;
 }
 async function leggiCodice(src,dets){
