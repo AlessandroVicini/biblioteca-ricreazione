@@ -177,7 +177,7 @@ video{width:100%;border-radius:12px;margin-top:10px;display:none;cursor:pointer;
     <div class="step"><div class="n"><svg class="i" viewBox="0 0 24 24"><path d="M4 10h13v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 11h1.5a2.5 2.5 0 0 1 0 5H17M8 3c0 1.5 1 1.5 1 3M12 3c0 1.5 1 1.5 1 3"/></svg></div><div><b>Vieni a leggerlo</b><p>Passa al Circolo Ricreazione, prendi il libro e goditelo con calma.</p></div></div>
   </div>
 </main>
-<footer>Biblioteca del Circolo Ricreazione · ARCI Nuovi Sentieri per Medicina APS · <a href="#admin" onclick="location.hash='admin';location.reload()">Gestione</a></footer>
+<footer>Biblioteca del Circolo Ricreazione · ARCI Nuovi Sentieri per Medicina APS</footer>
 
 <dialog id="dlg"></dialog>
 
@@ -289,7 +289,15 @@ async function cercaIsbn(isbn){
 }
 
 /* ---------- GitHub API ---------- */
-const cfg=()=>JSON.parse(localStorage.getItem("bibcfg")||"{}");
+let tokenSbloccato="";
+const cfgRaw=()=>JSON.parse(localStorage.getItem("bibcfg")||"{}");
+const cfg=()=>({...cfgRaw(),token:tokenSbloccato});
+const _b=u=>btoa(String.fromCharCode(...new Uint8Array(u))),_u=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function chiave(pw,salt){const k=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
+  return crypto.subtle.deriveKey({name:"PBKDF2",salt,iterations:250000,hash:"SHA-256"},k,{name:"AES-GCM",length:256},false,["encrypt","decrypt"])}
+async function cifra(token,pw){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+  const d=await crypto.subtle.encrypt({name:"AES-GCM",iv},await chiave(pw,salt),new TextEncoder().encode(token));return {salt:_b(salt),iv:_b(iv),data:_b(d)}}
+async function decifra(e,pw){const d=await crypto.subtle.decrypt({name:"AES-GCM",iv:_u(e.iv)},await chiave(pw,_u(e.salt)),_u(e.data));return new TextDecoder().decode(d)}
 async function gh(path,opt={}){const c=cfg();
   const r=await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`+(opt.method?"":`?ref=${c.branch||"main"}`),{...opt,headers:{Authorization:"Bearer "+c.token,Accept:"application/vnd.github+json"}});
   if(r.status===404&&!opt.method)return null;if(!r.ok)throw new Error("GitHub "+r.status+": "+(await r.text()).slice(0,120));return r.json()}
@@ -307,13 +315,29 @@ async function caricaFoto(isbn,dataUrl){
 /* ---------- area admin (index.html#admin) ---------- */
 let fotoData=null,corrente=null;
 function adminUI(){
+  const raw=cfgRaw();
+  if(raw.enc&&!tokenSbloccato){
+    const a=$("#admin");a.hidden=false;$("#sezioni").style.marginTop="18px";
+    a.innerHTML=`<h2 class="sec">Gestione biblioteca <span class="admin-badge">Admin · v7</span></h2>
+    <div class="adm" style="max-width:420px"><h3><span class="ic">${svg('<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>')}</span>Area riservata</h3>
+    <label>Password</label><input id="pw" type="password" autocomplete="current-password">
+    <button class="btn" id="sblocca">${svg('<path d="M5 12h14M13 6l6 6-6 6"/>')}Entra</button>
+    <div id="msg"></div>
+    <p class="sub" style="margin-top:16px">Password dimenticata? <a href="#" id="reset" style="color:var(--terra)">Ricollega GitHub</a> con un nuovo token.</p></div>`;
+    const go=async()=>{try{tokenSbloccato=await decifra(raw.enc,$("#pw").value);adminUI()}catch(e){msg("❌ Password sbagliata.")}};
+    $("#sblocca").onclick=go;$("#pw").onkeydown=e=>{if(e.key==="Enter")go()};$("#pw").focus();
+    $("#reset").onclick=e=>{e.preventDefault();if(confirm("Cancello il collegamento salvato su questo telefono. Dovrai incollare di nuovo un token. Procedo?")){localStorage.setItem("bibcfg",JSON.stringify({owner:raw.owner,repo:raw.repo,branch:"main"}));adminUI()}};
+    return;
+  }
+  if(raw.token&&!raw.enc&&!tokenSbloccato)tokenSbloccato=raw.token; // vecchio salvataggio in chiaro: da proteggere
   const c=cfg();const a=$("#admin");a.hidden=false;$("#sezioni").style.marginTop="18px";
   const H=(p,t,sub)=>`<h3><span class="ic">${svg(p)}</span>${t}</h3>${sub?`<p class="sub" style="margin:0">${sub}</p>`:""}`;
-  a.innerHTML=`<h2 class="sec">Gestione biblioteca <span class="admin-badge">Admin · v6</span></h2>
+  a.innerHTML=`<h2 class="sec">Gestione biblioteca <span class="admin-badge">Admin · v7</span></h2>
   <div class="adm">${H('<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',"Collegamento a GitHub",c.token?"✓ Collegato a "+esc(c.owner+"/"+c.repo):"Da fare una sola volta su questo dispositivo.")}
-   <details ${c.token?"":"open"}><summary class="sub" style="cursor:pointer;margin-top:10px">Impostazioni</summary>
+   <details ${c.token&&cfgRaw().enc?"":"open"}><summary class="sub" style="cursor:pointer;margin-top:10px">Impostazioni</summary>
    <div class="row"><div><label>Utente GitHub</label><input id="cOwner" value="${esc(c.owner||"AlessandroVicini")}"></div><div><label>Repository</label><input id="cRepo" value="${esc(c.repo||"biblioteca-ricreazione")}"></div></div>
    <label>Token (resta solo su questo dispositivo)</label><input id="cToken" type="password" value="${esc(c.token||"")}">
+   <div class="row"><div><label>Scegli una password</label><input id="cPw" type="password" autocomplete="new-password"></div><div><label>Ripetila</label><input id="cPw2" type="password" autocomplete="new-password"></div></div>
    <button class="btn ghost" id="cSave">${svg('<path d="M5 12l5 5L20 7"/>')}Salva collegamento</button></details></div>
   <div class="adm">${H('<path d="M12 5v14M5 12h14"/>',"Aggiungi un libro","Scrivi o inquadra l'ISBN: al resto pensa l'app.")}
    <div class="row" style="margin-top:14px"><input id="isbn" inputmode="numeric" placeholder="ISBN · 978…"><button class="btn" style="margin:0;flex:none" id="cerca">${svg('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>')}Cerca</button><button class="btn terra" style="margin:0;flex:none" id="scan" aria-label="Scansiona">${svg('<path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3M7 8v8M10 8v8M13 8v8M17 8v8"/>')}</button></div>
@@ -329,7 +353,11 @@ function adminUI(){
     <button class="btn" id="salva">${svg('<path d="M5 12l5 5L20 7"/>')}Salva nel catalogo</button>
    </div><div id="msg"></div></div>
   <div class="adm">${H('<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',"Libri in catalogo")}<div class="alist" id="alist" style="margin-top:10px">—</div></div>`;
-  $("#cSave").onclick=()=>{localStorage.setItem("bibcfg",JSON.stringify({owner:$("#cOwner").value.trim(),repo:$("#cRepo").value.trim(),token:$("#cToken").value.trim(),branch:"main"}));msg("Collegamento salvato.");aggiornaLista()};
+  $("#cSave").onclick=async()=>{const t=$("#cToken").value.trim(),p=$("#cPw").value;
+    if(!t)return msg("Incolla il token.");if(p.length<6)return msg("La password deve avere almeno 6 caratteri.");if(p!==$("#cPw2").value)return msg("Le due password non coincidono.");
+    localStorage.setItem("bibcfg",JSON.stringify({owner:$("#cOwner").value.trim(),repo:$("#cRepo").value.trim(),branch:"main",enc:await cifra(t,p)}));
+    tokenSbloccato=t;msg("✅ Collegamento salvato e protetto da password.");aggiornaLista()};
+  if(cfgRaw().token&&!cfgRaw().enc)msg("⚠️ Il token è salvato senza protezione: scegli una password qui sopra e premi Salva collegamento.");
   $("#cerca").onclick=()=>avvia($("#isbn").value);
   $("#isbn").onkeydown=e=>{if(e.key==="Enter")avvia(e.target.value)};
   $("#scan").onclick=scansiona;
