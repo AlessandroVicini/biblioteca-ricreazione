@@ -372,12 +372,32 @@ function mostraLista(){
     if(e.target.dataset.d){const b=libri.find(x=>x.isbn===e.target.dataset.d);if(!confirm("Eliminare «"+b.titolo+"»?"))return;
       try{const lista=(await leggiLibri()).filter(x=>x.isbn!==b.isbn);await scriviLibri(lista,"Rimosso: "+b.titolo);libri=lista;disegna();mostraLista()}catch(err){alert(err.message)}}};
 }
+let scanStop=null;
+async function rilevatore(){
+  if("BarcodeDetector" in window){try{const f=await BarcodeDetector.getSupportedFormats();if(f.includes("ean_13"))return new BarcodeDetector({formats:["ean_13"]})}catch(e){}}
+  const m=await import("https://cdn.jsdelivr.net/npm/barcode-detector@3/ponyfill/+esm");
+  return new m.BarcodeDetector({formats:["ean_13"]});
+}
 async function scansiona(){
-  if(!("BarcodeDetector" in window))return msg("Su questo browser la scansione non è disponibile (funziona con Chrome su Android): scrivi l'ISBN a mano.");
-  const v=$("#vid");const det=new BarcodeDetector({formats:["ean_13"]});
-  const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});v.srcObject=st;v.style.display="block";await v.play();msg("Inquadra il codice a barre…");
-  const stop=()=>{st.getTracks().forEach(t=>t.stop());v.style.display="none"};
-  const loop=async()=>{try{const r=await det.detect(v);const c=r.find(x=>/^97[89]\d{10}$/.test(x.rawValue));if(c){stop();$("#isbn").value=c.rawValue;return avvia(c.rawValue)}}catch(e){}requestAnimationFrame(loop)};loop();
+  if(scanStop){scanStop();return msg("Scansione annullata.")}
+  const v=$("#vid");let st;
+  try{
+    msg("Avvio la fotocamera…");
+    const det=await rilevatore();
+    st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},audio:false});
+    v.setAttribute("playsinline","");v.srcObject=st;v.style.display="block";await v.play();
+    msg("Inquadra il codice a barre dietro al libro, ben illuminato. Tocca di nuovo 📷 per annullare.");
+    let attivo=true;
+    scanStop=()=>{attivo=false;st.getTracks().forEach(t=>t.stop());v.style.display="none";scanStop=null};
+    const loop=async()=>{if(!attivo)return;
+      try{if(v.readyState>=2){const r=await det.detect(v);const c=r.find(x=>/^97[89]\d{10}$/.test(x.rawValue));
+        if(c){scanStop();if(navigator.vibrate)navigator.vibrate(80);$("#isbn").value=c.rawValue;return avvia(c.rawValue)}}}catch(e){}
+      setTimeout(loop,200)};
+    loop();
+  }catch(e){
+    if(st)st.getTracks().forEach(t=>t.stop());v.style.display="none";scanStop=null;
+    msg(e.name==="NotAllowedError"?"❌ Permesso fotocamera negato: consentilo nelle impostazioni del browser per questo sito e riprova.":e.name==="NotFoundError"?"❌ Nessuna fotocamera trovata su questo dispositivo.":"❌ Scansione non disponibile ("+esc(e.message||e.name)+"). Scrivi l'ISBN a mano.");
+  }
 }
 
 if(location.hash==="#admin")adminUI();
