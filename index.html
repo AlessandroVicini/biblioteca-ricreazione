@@ -129,7 +129,7 @@ dialog::backdrop{background:rgba(20,28,24,.55);backdrop-filter:blur(3px)}
 .btn:disabled{opacity:.5}
 .btn svg.i{width:18px;height:18px}
 #msg{margin-top:12px;font-size:.9rem;color:var(--ink2)}
-video{width:100%;border-radius:12px;margin-top:10px;display:none}
+video{width:100%;border-radius:12px;margin-top:10px;display:none;cursor:pointer;outline:3px solid var(--terra);outline-offset:-3px}
 .alist{display:flex;flex-direction:column;max-height:460px;overflow:auto}
 .ai{display:flex;gap:12px;align-items:center;font-size:.88rem;border-bottom:1px solid var(--line);padding:8px 0}
 .ai img{width:34px;height:50px;object-fit:cover;border-radius:3px}
@@ -394,10 +394,17 @@ async function scansiona(){
   try{
     msg("Avvio la fotocamera…");
     await rilevatori();
-    st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1080},advanced:[{focusMode:"continuous"}]},audio:false});
+    st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:3840},height:{ideal:2160},advanced:[{focusMode:"continuous"}]},audio:false});
     v.setAttribute("playsinline","");v.srcObject=st;v.style.display="block";await v.play();
     const tr=st.getVideoTracks()[0];try{const cap=tr.getCapabilities?.()||{};const adv={};if(cap.focusMode?.includes("continuous"))adv.focusMode="continuous";if(cap.zoom)adv.zoom=Math.min(cap.zoom.max,2);if(Object.keys(adv).length)await tr.applyConstraints({advanced:[adv]})}catch(e){}
-    msg("Avvicina il codice a barre (10-15 cm), orizzontale e ben illuminato. Tocca di nuovo 📷 per annullare. Se non lo legge usa <b>Foto del codice</b>.");
+    const ic=("ImageCapture" in window)?new ImageCapture(tr):null;
+    msg("Inquadra il codice a barre (10-15 cm), ben illuminato. Se non lo legge da solo <b>tocca l'immagine</b>: scatto una foto alla massima risoluzione e la analizzo. Ritocca 📷 per annullare.");
+    v.onclick=async()=>{
+      if(!scanStop)return;msg("Scatto alla massima risoluzione…");
+      let blob=null;try{if(ic)blob=await ic.takePhoto()}catch(e){}
+      if(!blob){const c2=document.createElement("canvas");c2.width=v.videoWidth;c2.height=v.videoHeight;c2.getContext("2d").drawImage(v,0,0);blob=await new Promise(r=>c2.toBlob(r,"image/jpeg",.95))}
+      scanStop();fotoCodice(blob);
+    };
     let attivo=true,n=0;const cv=document.createElement("canvas"),cx=cv.getContext("2d",{willReadFrequently:true});
     scanStop=()=>{attivo=false;st.getTracks().forEach(t=>t.stop());v.style.display="none";scanStop=null};
     const loop=async()=>{if(!attivo)return;
