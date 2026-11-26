@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Biblioteca del Circolo Ricreazione</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f7f2e9;--paper2:#efe7d8;--ink:#1f2a24;--ink2:#4d564f;--muted:#8a8f86;
+  --green:#1f3d33;--green2:#2e5a4a;--terra:#b5532f;--gold:#c99a3d;--card:#fffcf6;--line:#e4dccb;
+  --r:16px;--sh:0 1px 2px rgba(31,42,36,.06),0 8px 24px rgba(31,42,36,.08);
+  --serif:"Fraunces",Georgia,serif;--sans:"Inter",system-ui,-apple-system,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--sans);background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+button{font:inherit;color:inherit;cursor:pointer}
+
+/* top */
+.top{position:sticky;top:0;z-index:20;background:rgba(247,242,233,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .in{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:10px 18px}
+.logo{width:38px;height:38px;border-radius:11px;background:var(--green);color:var(--paper);display:grid;place-items:center}
+.brand b{display:block;font-family:var(--serif);font-size:1.05rem;font-weight:600;line-height:1.1}
+.brand span{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.top nav{margin-left:auto;display:flex;gap:4px}
+.top nav a{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;color:var(--ink2);text-decoration:none;font-size:.9rem;font-weight:500}
+.top nav a:hover{background:var(--paper2)}
+@media(max-width:640px){.top nav a span{display:none}}
+
+/* hero */
+.hero{background:radial-gradient(1200px 400px at 80% -20%,#36685a 0,transparent 60%),var(--green);color:var(--paper);padding:48px 18px 70px;position:relative;overflow:hidden}
+.hero .in{max-width:1120px;margin:0 auto;position:relative}
+.eyebrow{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,5.5vw,3.4rem);line-height:1.05;margin:10px 0 12px;max-width:16ch}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero p{max-width:46ch;color:#d9e2dc;line-height:1.55;margin:0 0 26px}
+.sbox{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:14px;padding:6px 6px 6px 16px;max-width:560px;box-shadow:0 10px 30px rgba(0,0,0,.25);color:var(--ink2)}
+.sbox input{flex:1;border:0;outline:0;background:none;font:inherit;font-size:1rem;padding:10px 0;color:var(--ink);min-width:0}
+.sbox button{border:0;background:var(--terra);color:#fff;border-radius:10px;padding:10px 14px;display:flex}
+.stats{display:flex;gap:26px;margin-top:26px;font-size:.85rem;color:#c5d2ca}
+.stats b{display:block;font-family:var(--serif);font-size:1.6rem;color:var(--paper);font-weight:600}
+.shelf-art{position:absolute;right:-10px;bottom:-70px;display:flex;align-items:flex-end;gap:6px;opacity:.9}
+.shelf-art i{display:block;width:26px;border-radius:3px 3px 0 0}
+@media(max-width:760px){.shelf-art{display:none}}
+
+main{max-width:1120px;margin:0 auto;padding:0 18px 60px}
+h2.sec{font-family:var(--serif);font-weight:600;font-size:1.5rem;margin:44px 0 6px;display:flex;align-items:center;gap:10px}
+.sub{color:var(--muted);margin:0 0 18px;font-size:.92rem}
+
+/* sezioni */
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:-34px;position:relative}
+.cat{border:1px solid var(--line);background:var(--card);border-radius:var(--r);padding:16px 14px;text-align:left;box-shadow:var(--sh);display:flex;flex-direction:column;gap:12px;transition:transform .15s,border-color .15s}
+.cat:hover{transform:translateY(-2px)}
+.cat .ic{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;background:var(--c);color:#fff}
+.cat .ic svg.i{width:24px;height:24px}
+.cat b{font-weight:600;font-size:.95rem;line-height:1.2}
+.cat small{color:var(--muted);font-size:.8rem}
+.cat.on{border-color:var(--c);box-shadow:0 0 0 2px var(--c),var(--sh)}
+.cat.all .ic{background:var(--ink)}
+@media(max-width:640px){.cats{grid-template-columns:1fr 1fr;gap:8px}.cat{flex-direction:row;align-items:center;padding:10px;gap:10px;border-radius:12px}.cat .ic{width:38px;height:38px;border-radius:10px}.cat b{font-size:.84rem}.cat small{font-size:.72rem}}
+
+/* barra filtro */
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 18px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--c,var(--ink));color:#fff;border-radius:999px;padding:6px 8px 6px 12px;font-size:.85rem;font-weight:500;border:0}
+.pill svg.i{width:16px;height:16px}
+.bar select{margin-left:auto;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 10px;font:inherit;font-size:.85rem;color:var(--ink2)}
+
+/* libri */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:26px 18px}
+.book{border:0;background:none;padding:0;text-align:left}
+.cv{position:relative;aspect-ratio:2/3;border-radius:4px 8px 8px 4px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.12),0 12px 24px -8px rgba(31,42,36,.35);transition:transform .2s}
+.cv::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.18) 0,rgba(255,255,255,.12) 3%,transparent 7%)}
+.book:hover .cv{transform:translateY(-4px) rotate(-.6deg)}
+.cv img{width:100%;height:100%;object-fit:cover;display:block}
+.ph{width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:16px 12px 14px 16px;color:#fff}
+.ph .pt{font-family:var(--serif);font-weight:600;font-size:1rem;line-height:1.15}
+.ph .pa{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.ph .orn{width:28px;height:2px;background:currentColor;opacity:.6}
+.tag{position:absolute;left:8px;top:8px;z-index:1;width:28px;height:28px;border-radius:8px;background:rgba(255,252,246,.94);color:var(--c);display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.tag svg.i{width:17px;height:17px}
+.book .t{font-weight:600;font-size:.92rem;margin-top:12px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.book .a{font-size:.8rem;color:var(--muted);margin-top:2px}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:50px 0}
+.empty svg.i{width:40px;height:40px;color:var(--line)}
+
+/* novità */
+.row-scroll{display:grid;grid-auto-flow:column;grid-auto-columns:136px;gap:18px;overflow-x:auto;padding:4px 2px 14px;scrollbar-width:none}
+
+/* come funziona */
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;gap:14px}
+.step .n{width:44px;height:44px;flex:none;border-radius:50%;background:var(--paper2);color:var(--green);display:grid;place-items:center}
+.step b{display:block;font-family:var(--serif);font-size:1.05rem;margin-bottom:3px}
+.step p{margin:0;color:var(--ink2);font-size:.88rem;line-height:1.45}
+footer{text-align:center;color:var(--muted);font-size:.82rem;padding:30px 18px 40px;border-top:1px solid var(--line)}
+footer a{color:var(--muted)}
+
+/* scheda */
+dialog{border:0;padding:0;background:var(--card);border-radius:22px;width:min(640px,94vw);max-height:90vh;box-shadow:0 30px 80px rgba(0,0,0,.35);color:var(--ink)}
+dialog::backdrop{background:rgba(20,28,24,.55);backdrop-filter:blur(3px)}
+.dh{position:relative;background:var(--c);padding:26px 22px 0;display:flex;gap:20px;align-items:flex-end}
+.dh .cv{width:130px;flex:none;margin-bottom:-36px}
+.dh .who{color:#fff;padding-bottom:18px}
+.dh .who .s{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;opacity:.9}
+.dh .who .s svg.i{width:15px;height:15px}
+.dh h3{font-family:var(--serif);font-weight:600;font-size:1.45rem;margin:6px 0 4px;line-height:1.15}
+.close{position:absolute;right:12px;top:12px;border:0;background:rgba(255,255,255,.2);color:#fff;width:36px;height:36px;border-radius:50%;display:grid;place-items:center}
+.db{padding:50px 22px 8px}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.fact{display:inline-flex;align-items:center;gap:6px;background:var(--paper2);border-radius:8px;padding:6px 10px;font-size:.82rem;color:var(--ink2)}
+.fact svg.i{width:16px;height:16px}
+.desc{color:var(--ink2);line-height:1.6;font-size:.93rem;max-height:200px;overflow:auto}
+.cta{margin:16px 22px 22px;display:flex;gap:12px;align-items:center;background:var(--green);color:var(--paper);border-radius:14px;padding:14px 16px;font-size:.9rem;line-height:1.4}
+.cta svg.i{width:28px;height:28px;color:var(--gold)}
+@media(max-width:560px){dialog{width:100vw;max-width:100vw;margin:auto 0 0;border-radius:22px 22px 0 0;max-height:92vh}.dh .cv{width:104px}.dh h3{font-size:1.2rem}}
+
+/* admin */
+.adm{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:18px 0;box-shadow:var(--sh)}
+.adm h3{margin:0 0 4px;font-family:var(--serif);font-weight:600;font-size:1.2rem;display:flex;align-items:center;gap:10px}
+.adm h3 .ic{width:36px;height:36px;border-radius:10px;background:var(--paper2);color:var(--green);display:grid;place-items:center}
+.adm label{display:block;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--ink2);margin:14px 0 5px}
+.adm input,.adm select,.adm textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:.95rem;background:#fff;color:var(--ink)}
+.adm input:focus,.adm select:focus,.adm textarea:focus{outline:2px solid var(--green2);outline-offset:-1px}
+.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--green);color:#fff;border:0;border-radius:10px;padding:11px 16px;font-weight:600;font-size:.92rem;margin-top:14px}
+.btn.terra{background:var(--terra)}.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5}
+.btn svg.i{width:18px;height:18px}
+#msg{margin-top:12px;font-size:.9rem;color:var(--ink2)}
+video{width:100%;border-radius:12px;margin-top:10px;display:none}
+.alist{display:flex;flex-direction:column;max-height:460px;overflow:auto}
+.ai{display:flex;gap:12px;align-items:center;font-size:.88rem;border-bottom:1px solid var(--line);padding:8px 0}
+.ai img{width:34px;height:50px;object-fit:cover;border-radius:3px}
+.ai span{flex:1;line-height:1.35}
+.ai button{font-size:.8rem;padding:6px 10px;border:1px solid var(--line);background:#fff;border-radius:8px}
+#anteprima .cover{width:90px;border-radius:4px;box-shadow:var(--sh)}
+.admin-badge{background:var(--terra);color:#fff;font-size:.7rem;font-weight:600;letter-spacing:.1em;padding:3px 8px;border-radius:6px;text-transform:uppercase}
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg></div>
+  <div class="brand"><b>Biblioteca del Circolo</b><span>Circolo Ricreazione · Medicina</span></div>
+  <nav>
+    <a href="#sezioni"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Sezioni</span></a>
+    <a href="#catalogo"><svg class="i" viewBox="0 0 24 24"><path d="M4 4v16M8 4v16M12 5l4 15M17 4h3v16h-3z"/></svg><span>Catalogo</span></a>
+    <a href="#come"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Vieni al circolo</span></a>
+  </nav>
+</div></header>
+
+<section class="hero"><div class="in">
+  <div class="eyebrow">Libri da leggere insieme</div>
+  <h1>Scegli il libro, <em>leggilo</em> al Circolo.</h1>
+  <p>Tutti i titoli della nostra biblioteca, con copertine e trame. Trova quello che ti incuriosisce e vieni a sfogliarlo con calma, davanti a un caffè.</p>
+  <div class="sbox"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" placeholder="Titolo, autore, argomento…" autocomplete="off"><button onclick="document.getElementById('catalogo').scrollIntoView()" aria-label="Cerca"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+  <div class="stats"><div><b id="nLibri">0</b>libri</div><div><b id="nAutori">0</b>autori</div><div><b id="nSez">0</b>sezioni</div></div>
+  <div class="shelf-art" aria-hidden="true"><i style="height:150px;background:#b5532f"></i><i style="height:180px;background:#c99a3d"></i><i style="height:130px;background:#e9dfcc"></i><i style="height:200px;background:#5c7f72"></i><i style="height:160px;background:#8b3a4f"></i><i style="height:140px;width:34px;background:#d7b56d"></i><i style="height:185px;background:#3f6c8a"></i></div>
+</div></section>
+
+<main>
+  <div id="admin" hidden></div>
+  <div class="cats" id="sezioni"></div>
+
+  <div id="novitaBox"><h2 class="sec">Arrivati da poco</h2><p class="sub">Gli ultimi libri entrati negli scaffali.</p><div class="row-scroll" id="novita"></div></div>
+
+  <h2 class="sec" id="catalogo">Il catalogo</h2>
+  <div class="bar"><span id="filtro"></span><span class="sub" id="count" style="margin:0"></span>
+    <select id="ord"><option value="t">Titolo A-Z</option><option value="a">Autore A-Z</option><option value="n">Più recenti</option></select></div>
+  <div class="grid" id="grid"></div>
+
+  <h2 class="sec" id="come">Come funziona</h2>
+  <div class="how">
+    <div class="step"><div class="n"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></div><div><b>Cerca</b><p>Sfoglia le sezioni o cerca per titolo, autore o argomento.</p></div></div>
+    <div class="step"><div class="n"><svg class="i" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z"/></svg></div><div><b>Scegli</b><p>Apri la scheda: copertina, trama e lo scaffale dove trovarlo.</p></div></div>
+    <div class="step"><div class="n"><svg class="i" viewBox="0 0 24 24"><path d="M4 10h13v4a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 11h1.5a2.5 2.5 0 0 1 0 5H17M8 3c0 1.5 1 1.5 1 3M12 3c0 1.5 1 1.5 1 3"/></svg></div><div><b>Vieni a leggerlo</b><p>Passa al Circolo Ricreazione, prendi il libro e goditelo con calma.</p></div></div>
+  </div>
+</main>
+<footer>Biblioteca del Circolo Ricreazione · ARCI Nuovi Sentieri per Medicina APS · <a href="#admin" onclick="location.hash='admin';location.reload()">Gestione</a></footer>
+
+<dialog id="dlg"></dialog>
+
+<script>
+const IC={
+ "Narrativa italiana":'<path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/>',
+ "Narrativa straniera":'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+ "Gialli e thriller":'<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l6 6"/>',
+ "Fantasy e fantascienza":'<path d="M12 3l2.4 5.6L20 11l-5.6 2.4L12 19l-2.4-5.6L4 11l5.6-2.4zM19 3v4M17 5h4"/>',
+ "Storia":'<path d="M3 21h18M4 10h16M12 3l9 5H3zM6 10v8M10 10v8M14 10v8M18 10v8"/>',
+ "Toscana e territorio":'<path d="M2 20c3-5 6-6 9-3 3-5 7-5 11 3zM17 15V5M17 5c-1.5 3-1.5 6 0 10 1.5-4 1.5-7 0-10"/>',
+ "Saggistica":'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3"/>',
+ "Biografie":'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+ "Cucina":'<path d="M4 11h16v2a7 7 0 0 1-7 7h-2a7 7 0 0 1-7-7zM2 11h20M9 3c0 2 1 2 1 4M14 3c0 2 1 2 1 4"/>',
+ "Ragazzi":'<path d="M12 3a5 6 0 0 1 5 6c0 4-3 6.5-5 6.5S7 13 7 9a5 6 0 0 1 5-6zM12 15.5l-1 1.5h2zM12 17c0 2-2 2-2 4"/>',
+ "Fumetti":'<path d="M4 4h16v11H9l-5 4zM8 9h8M8 12h5"/>',
+ "Poesia":'<path d="M20 4C12 4 6 10 6 18l-2 2M6 18c8 0 14-6 14-14M10 14l5-5"/>'};
+const COL={"Narrativa italiana":"#1f5a4c","Narrativa straniera":"#33607f","Gialli e thriller":"#2a2a33","Fantasy e fantascienza":"#5b4b8a","Storia":"#8a5a2b","Toscana e territorio":"#6b7d3a","Saggistica":"#b5532f","Biografie":"#7d4060","Cucina":"#c0782a","Ragazzi":"#d0663f","Fumetti":"#2f7f8f","Poesia":"#8b3a4f"};
+const SEZIONI=Object.keys(IC);
+const svg=(p,c="i")=>`<svg class="${c}" viewBox="0 0 24 24">${p}</svg>`;
+const DEMO=[
+ ["9788804668237","I promessi sposi","Alessandro Manzoni","Narrativa italiana","1840"],["9788817154871","Le avventure di Pinocchio","Carlo Collodi","Ragazzi","1883"],
+ ["9788845292613","Il nome della rosa","Umberto Eco","Gialli e thriller","1980"],["9788806219352","Se questo è un uomo","Primo Levi","Biografie","1947"],
+ ["9788807900051","Il Gattopardo","Giuseppe Tomasi di Lampedusa","Narrativa italiana","1958"],["9788804719939","Cent'anni di solitudine","Gabriel García Márquez","Narrativa straniera","1967"],
+ ["9788845210273","Il Signore degli Anelli","J.R.R. Tolkien","Fantasy e fantascienza","1954"],["9788809766327","La scienza in cucina","Pellegrino Artusi","Cucina","1891"],
+ ["9788817106405","Storia d'Italia","Indro Montanelli","Storia","1965"],["9788806207618","Le città invisibili","Italo Calvino","Narrativa italiana","1972"],
+ ["9788804492948","1984","George Orwell","Narrativa straniera","1949"],["9788807883552","Ossi di seppia","Eugenio Montale","Poesia","1925"],
+ ["9788833570990","Corto Maltese. Una ballata del mare salato","Hugo Pratt","Fumetti","1967"],["9788800000001","Guida alla Valleriana","Autori vari","Toscana e territorio","2010"]
+].map(([isbn,titolo,autori,sezione,anno],i)=>({isbn,titolo,autori,sezione,anno,demo:1,aggiunto:"2026-11-"+String(10+i).padStart(2,"0"),descrizione:"Scheda di esempio: quando inserirai i libri veri qui comparirà la trama recuperata dall'ISBN."}));
+let libri=[],sez="Tutte",demo=false;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const col=s=>COL[s]||"#1f3d33";
+
+function phHTML(b){return `<div class="ph" style="background:linear-gradient(160deg,${col(b.sezione)},${col(b.sezione)}cc)"><div class="orn"></div><div class="pt">${esc(b.titolo)}</div><div class="pa">${esc((b.autori||"").split(",")[0])}</div></div>`}
+function cover(b,tag=true){
+  const inner=b.copertina?`<img loading="lazy" src="${esc(b.copertina)}" alt="" onerror="this.replaceWith(Object.assign(document.createElement('div'),{innerHTML:phHTML(libri.find(x=>x.isbn==='${esc(b.isbn)}')||{})}).firstChild)">`:phHTML(b);
+  return `<div class="cv" style="--c:${col(b.sezione)}">${tag&&IC[b.sezione]?`<span class="tag">${svg(IC[b.sezione])}</span>`:""}${inner}</div>`}
+function card(b){return `<button class="book" data-i="${esc(b.isbn)}">${cover(b)}<div class="t">${esc(b.titolo)}</div><div class="a">${esc(b.autori)}</div></button>`}
+
+/* ---------- catalogo pubblico ---------- */
+async function carica(){
+  try{const r=await fetch("libri.json?"+Date.now());libri=r.ok?await r.json():[]}catch(e){libri=[]}
+  if(!libri.length&&location.hash!=="#admin"){libri=DEMO;demo=true}
+  disegna();
+}
+function disegna(){
+  const conta=s=>libri.filter(b=>b.sezione===s).length;
+  $("#nLibri").textContent=libri.length;
+  $("#nAutori").textContent=new Set(libri.map(b=>b.autori)).size;
+  $("#nSez").textContent=SEZIONI.filter(conta).length;
+  $("#sezioni").innerHTML=`<button class="cat all ${sez==="Tutte"?"on":""}" data-s="Tutte" style="--c:#1f2a24"><span class="ic">${svg('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>')}</span><div><b>Tutti i libri</b><br><small>${libri.length} titoli</small></div></button>`+
+    SEZIONI.map(s=>`<button class="cat ${s===sez?"on":""}" data-s="${esc(s)}" style="--c:${col(s)}"><span class="ic">${svg(IC[s])}</span><div><b>${esc(s)}</b><br><small>${conta(s)} ${conta(s)===1?"titolo":"titoli"}</small></div></button>`).join("");
+  const rec=[...libri].sort((a,b)=>(b.aggiunto||"").localeCompare(a.aggiunto||"")).slice(0,10);
+  $("#novitaBox").hidden=!rec.length;$("#novita").innerHTML=rec.map(card).join("");
+  const q=$("#q").value.trim().toLowerCase(),o=$("#ord").value;
+  const lista=libri.filter(b=>(sez==="Tutte"||b.sezione===sez)&&(!q||[b.titolo,b.autori,b.editore,b.sezione,...(b.etichette||[])].join(" ").toLowerCase().includes(q)))
+    .sort((a,b)=>o==="n"?(b.aggiunto||"").localeCompare(a.aggiunto||""):o==="a"?(a.autori||"").localeCompare(b.autori||"","it"):a.titolo.localeCompare(b.titolo,"it"));
+  $("#filtro").innerHTML=sez==="Tutte"?"":`<button class="pill" style="--c:${col(sez)}" data-s="Tutte">${svg(IC[sez])} ${esc(sez)} ${svg('<path d="M6 6l12 12M18 6L6 18"/>')}</button>`;
+  $("#count").textContent=lista.length+(lista.length===1?" libro":" libri")+(q?` per «${$("#q").value.trim()}»`:"")+(demo?" · titoli di esempio":"");
+  $("#grid").innerHTML=lista.length?lista.map(card).join(""):`<div class="empty">${svg('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4M8 11h6"/>')}<p>Nessun libro trovato.<br>Prova con un'altra parola o un'altra sezione.</p></div>`;
+}
+document.addEventListener("click",e=>{
+  const s=e.target.closest("[data-s]");if(s){sez=s.dataset.s;disegna();if(s.classList.contains("cat"))$("#catalogo").scrollIntoView();return}
+  const el=e.target.closest(".book");if(el)apri(libri.find(x=>x.isbn===el.dataset.i));
+});
+$("#q").oninput=()=>{disegna()};
+$("#q").onkeydown=e=>{if(e.key==="Enter")$("#catalogo").scrollIntoView()};
+$("#ord").onchange=disegna;
+function apri(b){
+  const f=[[b.anno,'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'],[b.editore,'<path d="M4 20V8l8-5 8 5v12zM9 20v-6h6v6"/>'],[b.posizione&&"Scaffale "+b.posizione,'<path d="M3 6h18M3 12h18M3 18h18M6 3v18M18 3v18"/>'],[b.isbn&&"ISBN "+b.isbn,'<path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/>']].filter(x=>x[0]);
+  $("#dlg").innerHTML=`<div class="dh" style="--c:${col(b.sezione)}">${cover(b,false)}<div class="who"><span class="s">${svg(IC[b.sezione]||"")} ${esc(b.sezione)}</span><h3>${esc(b.titolo)}</h3><div>${esc(b.autori)}</div></div><button class="close" onclick="dlg.close()" aria-label="Chiudi">${svg('<path d="M6 6l12 12M18 6L6 18"/>')}</button></div>
+  <div class="db"><div class="facts">${f.map(([t,p])=>`<span class="fact">${svg(p)}${esc(t)}</span>`).join("")}</div><div class="desc">${esc(b.descrizione||"")}</div></div>
+  <div class="cta">${svg('<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>')}<div><b>Ti aspetta al Circolo Ricreazione.</b><br>Passa a trovarci e leggilo con calma, qui da noi.</div></div>`;
+  dlg.showModal()}
+dlg.onclick=e=>{if(e.target===dlg)dlg.close()};
+</script>
+<script>
+/* ---------- classificazione automatica ---------- */
+function classifica(info){
+  const dewey=parseFloat((info.dewey||"").replace(/[^\d.]/g,""));
+  const t=[...(info.categorie||[]),...(info.etichette||[])].join(" | ").toLowerCase();
+  const has=re=>re.test(t);
+  if(has(/juvenile|children|young adult|ragazzi|bambini/))return"Ragazzi";
+  if(has(/comic|graphic novel|fumett|manga/)||(dewey>=741.5&&dewey<741.6))return"Fumetti";
+  if(has(/tuscany|toscana|pescia|valleriana|firenze|florence|lucca|pistoia|siena|pisa/))return"Toscana e territorio";
+  if(has(/cook|cucina|ricett|gastronom/)||(dewey>=641&&dewey<642))return"Cucina";
+  if(has(/detective|mystery|thriller|crime|giall|noir|polizies/))return"Gialli e thriller";
+  if(has(/fantasy|science fiction|fantascienza|fantastic/))return"Fantasy e fantascienza";
+  if(has(/poetry|poesia|poems|poesie/))return"Poesia";
+  if(has(/biograph|autobiograph|memoir/)||(dewey>=920&&dewey<930))return"Biografie";
+  if(has(/history|storia|histoire/)||(dewey>=900&&dewey<1000))return"Storia";
+  if(has(/italian (fiction|literature)|narrativa italiana|letteratura italiana/)||(dewey>=850&&dewey<860))return"Narrativa italiana";
+  if(has(/fiction|narrativa|novel|romanz|literature|letteratura/)||(dewey>=800&&dewey<900))return info.lingua==="it"&&!has(/translat|tradu/)&&info.italiano?"Narrativa italiana":"Narrativa straniera";
+  return"Saggistica";
+}
+async function cercaIsbn(isbn){
+  const out={isbn,categorie:[],etichette:[]};
+  const [g,o]=await Promise.allSettled([
+    fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`).then(r=>r.json()),
+    fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`).then(r=>r.json())]);
+  const v=g.value?.items?.[0]?.volumeInfo;
+  if(v){Object.assign(out,{titolo:v.title+(v.subtitle?": "+v.subtitle:""),autori:(v.authors||[]).join(", "),editore:v.publisher,anno:(v.publishedDate||"").slice(0,4),descrizione:v.description,lingua:v.language,copertina:(v.imageLinks?.thumbnail||"").replace("http:","https:").replace("&edge=curl","")});out.categorie.push(...(v.categories||[]))}
+  const ol=o.value?.["ISBN:"+isbn];
+  if(ol){out.titolo||=ol.title;out.autori||=(ol.authors||[]).map(a=>a.name).join(", ");out.editore||=ol.publishers?.[0]?.name;out.anno||=(ol.publish_date||"").match(/\d{4}/)?.[0];
+    out.etichette=(ol.subjects||[]).map(s=>s.name).slice(0,12);out.dewey=ol.classifications?.dewey_decimal_class?.[0];if(!out.copertina&&ol.cover)out.copertina=ol.cover.medium||ol.cover.large}
+  if(!out.titolo)return null;
+  out.sezione=classifica(out);return out;
+}
+
+/* ---------- GitHub API ---------- */
+const cfg=()=>JSON.parse(localStorage.getItem("bibcfg")||"{}");
+async function gh(path,opt={}){const c=cfg();
+  const r=await fetch(`https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path}`+(opt.method?"":`?ref=${c.branch||"main"}`),{...opt,headers:{Authorization:"Bearer "+c.token,Accept:"application/vnd.github+json"}});
+  if(r.status===404&&!opt.method)return null;if(!r.ok)throw new Error("GitHub "+r.status+": "+(await r.text()).slice(0,120));return r.json()}
+const b64=s=>btoa(unescape(encodeURIComponent(s)));
+const unb64=s=>decodeURIComponent(escape(atob(s.replace(/\n/g,""))));
+let shaLibri=null;
+async function leggiLibri(){const f=await gh("libri.json");shaLibri=f?.sha||null;return f?JSON.parse(unb64(f.content)):[]}
+async function scriviLibri(lista,msg){
+  const r=await gh("libri.json",{method:"PUT",body:JSON.stringify({message:msg,content:b64(JSON.stringify(lista,null,1)),sha:shaLibri||undefined,branch:cfg().branch||"main"})});
+  shaLibri=r.content.sha}
+async function caricaFoto(isbn,dataUrl){
+  const p=`copertine/${isbn}.jpg`;const ex=await gh(p);
+  await gh(p,{method:"PUT",body:JSON.stringify({message:"Copertina "+isbn,content:dataUrl.split(",")[1],sha:ex?.sha,branch:cfg().branch||"main"})});return p}
+
+/* ---------- area admin (index.html#admin) ---------- */
+let fotoData=null,corrente=null;
+function adminUI(){
+  const c=cfg();const a=$("#admin");a.hidden=false;$("#sezioni").style.marginTop="18px";
+  const H=(p,t,sub)=>`<h3><span class="ic">${svg(p)}</span>${t}</h3>${sub?`<p class="sub" style="margin:0">${sub}</p>`:""}`;
+  a.innerHTML=`<h2 class="sec">Gestione biblioteca <span class="admin-badge">Admin</span></h2>
+  <div class="adm">${H('<path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',"Collegamento a GitHub",c.token?"✓ Collegato a "+esc(c.owner+"/"+c.repo):"Da fare una sola volta su questo dispositivo.")}
+   <details ${c.token?"":"open"}><summary class="sub" style="cursor:pointer;margin-top:10px">Impostazioni</summary>
+   <div class="row"><div><label>Utente GitHub</label><input id="cOwner" value="${esc(c.owner||"AlessandroVicini")}"></div><div><label>Repository</label><input id="cRepo" value="${esc(c.repo||"biblioteca-ricreazione")}"></div></div>
+   <label>Token (resta solo su questo dispositivo)</label><input id="cToken" type="password" value="${esc(c.token||"")}">
+   <button class="btn ghost" id="cSave">${svg('<path d="M5 12l5 5L20 7"/>')}Salva collegamento</button></details></div>
+  <div class="adm">${H('<path d="M12 5v14M5 12h14"/>',"Aggiungi un libro","Scrivi o inquadra l'ISBN: al resto pensa l'app.")}
+   <div class="row" style="margin-top:14px"><input id="isbn" inputmode="numeric" placeholder="ISBN · 978…"><button class="btn" style="margin:0;flex:none" id="cerca">${svg('<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>')}Cerca</button><button class="btn terra" style="margin:0;flex:none" id="scan" aria-label="Scansiona">${svg('<path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3M7 8v8M10 8v8M13 8v8M17 8v8"/>')}</button></div>
+   <video id="vid" playsinline muted></video>
+   <div id="form" hidden>
+    <div class="row"><div style="flex:0 0 96px"><label>Copertina</label><div id="anteprima"></div></div><div>
+    <label>Titolo</label><input id="fTit"><label>Autore/i</label><input id="fAut"></div></div>
+    <div class="row"><div><label>Editore</label><input id="fEd"></div><div style="flex:0 0 90px"><label>Anno</label><input id="fAnno"></div></div>
+    <div class="row"><div><label>Sezione · proposta in automatico</label><select id="fSez">${SEZIONI.map(s=>`<option>${s}</option>`).join("")}</select></div><div style="flex:0 0 110px"><label>Scaffale</label><input id="fPos" placeholder="es. B3"></div></div>
+    <label>Trama</label><textarea id="fDesc" rows="4"></textarea>
+    <label>Foto della copertina (facoltativa)</label><input id="fFoto" type="file" accept="image/*" capture="environment">
+    <button class="btn" id="salva">${svg('<path d="M5 12l5 5L20 7"/>')}Salva nel catalogo</button>
+   </div><div id="msg"></div></div>
+  <div class="adm">${H('<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',"Libri in catalogo")}<div class="alist" id="alist" style="margin-top:10px">—</div></div>`;
+  $("#cSave").onclick=()=>{localStorage.setItem("bibcfg",JSON.stringify({owner:$("#cOwner").value.trim(),repo:$("#cRepo").value.trim(),token:$("#cToken").value.trim(),branch:"main"}));msg("Collegamento salvato.");aggiornaLista()};
+  $("#cerca").onclick=()=>avvia($("#isbn").value);
+  $("#isbn").onkeydown=e=>{if(e.key==="Enter")avvia(e.target.value)};
+  $("#scan").onclick=scansiona;
+  $("#fFoto").onchange=e=>riduci(e.target.files[0]);
+  $("#salva").onclick=salva;
+  if(c.token)aggiornaLista();
+}
+async function avvia(v){
+  const isbn=v.replace(/[^\dX]/gi,"");if(isbn.length!==10&&isbn.length!==13)return msg("ISBN non valido.");
+  msg("Cerco…");fotoData=null;$("#anteprima").innerHTML="";$("#fFoto").value="";
+  const ex=libri.find(b=>b.isbn===isbn);
+  corrente=ex?{...ex}:(await cercaIsbn(isbn))||{isbn,titolo:"",sezione:"Saggistica",etichette:[]};
+  msg(ex?"Questo libro è già in catalogo: puoi modificarlo.":corrente.titolo?"Trovato! Controlla la sezione e salva.":"Non trovato online: compila a mano.");
+  $("#form").hidden=false;
+  $("#fTit").value=corrente.titolo||"";$("#fAut").value=corrente.autori||"";$("#fEd").value=corrente.editore||"";$("#fAnno").value=corrente.anno||"";
+  $("#fSez").value=corrente.sezione;$("#fPos").value=corrente.posizione||"";$("#fDesc").value=corrente.descrizione||"";
+  if(corrente.copertina)$("#anteprima").innerHTML=`<img class="cover" src="${esc(corrente.copertina)}">`;
+}
+function riduci(file){if(!file)return;const img=new Image();img.onload=()=>{const k=Math.min(1,700/Math.max(img.width,img.height));const cv=document.createElement("canvas");cv.width=img.width*k;cv.height=img.height*k;cv.getContext("2d").drawImage(img,0,0,cv.width,cv.height);fotoData=cv.toDataURL("image/jpeg",.82);$("#anteprima").innerHTML=`<img class="cover" src="${fotoData}">`};img.src=URL.createObjectURL(file)}
+async function salva(){
+  if(!cfg().token)return msg("Prima salva il collegamento a GitHub.");
+  if(!$("#fTit").value.trim())return msg("Manca il titolo.");
+  $("#salva").disabled=true;msg("Salvo…");
+  try{
+    const lista=await leggiLibri();
+    const b={isbn:corrente.isbn,titolo:$("#fTit").value.trim(),autori:$("#fAut").value.trim(),editore:$("#fEd").value.trim(),anno:$("#fAnno").value.trim(),sezione:$("#fSez").value,posizione:$("#fPos").value.trim(),descrizione:$("#fDesc").value.trim(),etichette:corrente.etichette||[],copertina:corrente.copertina||"",aggiunto:corrente.aggiunto||new Date().toISOString().slice(0,10)};
+    if(fotoData)b.copertina=await caricaFoto(b.isbn,fotoData)+"?v="+Date.now();
+    const i=lista.findIndex(x=>x.isbn===b.isbn);i>=0?lista[i]=b:lista.push(b);
+    await scriviLibri(lista,(i>=0?"Modifica: ":"Aggiunto: ")+b.titolo);
+    libri=lista;disegna();mostraLista();
+    msg(`✅ «${esc(b.titolo)}» salvato. Sul sito pubblico compare entro 1-2 minuti.`);
+    $("#form").hidden=true;$("#isbn").value="";$("#isbn").focus();
+  }catch(e){msg("❌ "+esc(e.message))}
+  $("#salva").disabled=false;
+}
+async function aggiornaLista(){try{libri=await leggiLibri();disegna();mostraLista()}catch(e){$("#alist").textContent="Errore: "+e.message}}
+function mostraLista(){
+  $("#alist").innerHTML=libri.length?[...libri].reverse().map(b=>`<div class="ai">${b.copertina?`<img src="${esc(b.copertina)}">`:""}<span><b>${esc(b.titolo)}</b><br>${esc(b.sezione)}</span><button data-e="${b.isbn}">Modifica</button><button data-d="${b.isbn}">Elimina</button></div>`).join(""):"Nessun libro ancora.";
+  $("#alist").onclick=async e=>{
+    if(e.target.dataset.e){$("#isbn").value=e.target.dataset.e;avvia(e.target.dataset.e);scrollTo(0,0)}
+    if(e.target.dataset.d){const b=libri.find(x=>x.isbn===e.target.dataset.d);if(!confirm("Eliminare «"+b.titolo+"»?"))return;
+      try{const lista=(await leggiLibri()).filter(x=>x.isbn!==b.isbn);await scriviLibri(lista,"Rimosso: "+b.titolo);libri=lista;disegna();mostraLista()}catch(err){alert(err.message)}}};
+}
+async function scansiona(){
+  if(!("BarcodeDetector" in window))return msg("Su questo browser la scansione non è disponibile (funziona con Chrome su Android): scrivi l'ISBN a mano.");
+  const v=$("#vid");const det=new BarcodeDetector({formats:["ean_13"]});
+  const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});v.srcObject=st;v.style.display="block";await v.play();msg("Inquadra il codice a barre…");
+  const stop=()=>{st.getTracks().forEach(t=>t.stop());v.style.display="none"};
+  const loop=async()=>{try{const r=await det.detect(v);const c=r.find(x=>/^97[89]\d{10}$/.test(x.rawValue));if(c){stop();$("#isbn").value=c.rawValue;return avvia(c.rawValue)}}catch(e){}requestAnimationFrame(loop)};loop();
+}
+
+if(location.hash==="#admin")adminUI();
+carica();
+</script>
+</body>
+</html>
